@@ -1,8 +1,0 @@
-prefix=/home/giromi/Repos/catkin_ws/install
-
-Name: gazebo_ros_actor_plugin
-Description: Description of gazebo_ros_actor_plugin
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib -lgazebo_ros_actor_command
-Requires: gazebo_ros gazebo_plugins geometry_msgs nav_msgs
