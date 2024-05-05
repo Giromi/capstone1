@@ -5,6 +5,7 @@ project(turtlebot3_line_follower)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   rospy
+  std_msgs
   sensor_msgs
   geometry_msgs
   message_generation
