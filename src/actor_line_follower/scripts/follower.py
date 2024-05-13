@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# ROS package (python)
 import rospy
 
 # Messages
@@ -15,14 +14,16 @@ from controller import Controller
 # import getch
 # import threading
 
+SIM_RATE = 30
+
 class Follower:
     def __init__(self):
         self.detector = LineDetector()
         self.motion_planner = MotionPlanner()
-        self.controller = Controller(Kp=0.00020, Ki=0.000001, Kd=0.000001, T=1/30)
+        self.controller = Controller(Kp=0.1, Ki=0.1, Kd=0.1, T=SIM_RATE)
 
         rospy.init_node('line_follower')
-        self.rate = rospy.Rate(30) #30hz
+        self.rate = rospy.Rate(SIM_RATE) #30hz
         self.subscriber = rospy.Subscriber('camera/image', Image, self.camera_callback)
         self.publisher = rospy.Publisher('error', Float32, queue_size=10)
 

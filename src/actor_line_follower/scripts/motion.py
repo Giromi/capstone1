@@ -14,7 +14,7 @@ class MotionPlanner:
 
     def move_control(self, direction, control_input):
         self.velocity.linear.x = self.linear_speed
-        self.velocity.angular.z = control_input
+        self.velocity.angular.z = control_input 
         self.publisher.publish(self.velocity)
         rospy.loginfo(f'Lin. vel. = {self.velocity.linear.x} - Ang. vel. = {self.velocity.angular.z}')
 

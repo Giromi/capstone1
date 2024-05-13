@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="sim" default="true"/>
+  <arg name="rec" default="false"/>
+  <arg name="x" default="0.025"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0"/>  
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="1.570796"/>  
+  <!-- <arg name="world_file" default="empty.world"/> -->
+  <env name="GAZEBO_MODEL_PATH" value="$(find actor_line_follower)/config/skins/"/>
+  <!-- <env name="GAZEBO_RESOURCE_PATH" value="$(find world_generation)/config/files/"/> -->
+
+  <node pkg="actor_line_follower" name="line_follower" type="follower.py" cwd="node" output="screen"></node>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find actor_line_follower)/config/worlds/world.world"/>
+    <!-- world_name is wrt GAZEBO_RESOURCE_PATH environment variable -->
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true"/>
+  </include>
+    <!-- RQT image view related to line follower topic -->
+  <node pkg="rqt_image_view" type="rqt_image_view" name="rqt_image_view" args="/line_follower"/>
+
+</launch>
