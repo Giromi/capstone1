@@ -16,11 +16,24 @@ from controller import Controller
 
 SIM_RATE = 30
 
+
+# maze = [[1, 0, 1, 0]]
+# simulation maze manual 
+# real input left right
+
 class Follower:
     def __init__(self):
         self.detector = LineDetector()
-        self.motion_planner = MotionPlanner()
-        self.controller = Controller(Kp=0.1, Ki=0.1, Kd=0.1, T=SIM_RATE)
+        self.motion_planner = MotionPlanner(linear_speed=0.8)
+        # self.controller = Controller(Kp=0.0001, Ki=0.00000, Kd=0.000, T=SIM_RATE)
+        # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.000, T=SIM_RATE)
+        # self.controller = Controller(Kp=1.0, Ki=0.00000, Kd=0.000, T=SIM_RATE)
+
+        # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=10.0, T=SIM_RATE)
+        # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.1, T=SIM_RATE)
+        # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.00000001, T=SIM_RATE)
+
+        self.controller = Controller(Kp=0.03, Ki=0.00002, Kd=0.1, T=SIM_RATE)
 
         rospy.init_node('line_follower')
         self.rate = rospy.Rate(SIM_RATE) #30hz
@@ -48,8 +61,9 @@ class Follower:
         # direction = self.detector.get_direction(message=msg, line_color='yellow', tol=15)
         # self.motion_planner.move(direction)
 
-        direction, error = self.detector.get_direction_with_pid(message=msg, line_color='yellow', tol=15)
+        direction, error = self.detector.get_direction_with_pid(message=msg, line_color='yellow', tol=0)
         control_input = self.controller.PID_control(error)
+        # control_input = self.controller.P_control(error)
         self.motion_planner.move_control(direction, control_input)
 
         self.publisher.publish(error)

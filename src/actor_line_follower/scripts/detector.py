@@ -54,7 +54,7 @@ class LineDetector:
         return lower, upper
 
 
-    def get_direction_with_pid(self, message=None, line_color='red', tol=10):
+    def get_direction_with_pid(self, message=None, line_color='red', tol=10.):
         if message:
             self.read_image(message)
 

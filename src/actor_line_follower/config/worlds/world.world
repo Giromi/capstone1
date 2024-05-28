@@ -319,7 +319,7 @@
         <collision name='Wall_6_Collision'>
           <geometry>
             <box>
-              <size>7 0.15 2.5</size>
+              <size>5 0.15 2.5</size>
             </box>
           </geometry>
           <pose>0 0 1.25 0 -0 0</pose>
@@ -341,7 +341,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>7 0.15 2.5</size>
+              <size>5 0.15 2.5</size>
             </box>
           </geometry>
           <material>
@@ -476,7 +476,7 @@
           <pose>0 0 1.25 0 -0 0</pose>
           <geometry>
             <box>
-              <size>3.75 0.15 2.5</size>
+              <size>3 0.15 2.5</size>
             </box>
           </geometry>
           <material>
@@ -714,7 +714,7 @@
             <layer>0</layer>
           </meta>
         </visual>
-        <pose>-3.96386 -2.42451 0 0 -0 -1.5708</pose>
+        <pose>-3.96386 -8.42451 0 0 -0 -1.5708</pose>
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
@@ -724,7 +724,7 @@
           <geometry>
             <plane>
               <normal>0 0 1</normal>
-              <size>0.05 1.40411</size>
+              <size>0.30 1.40411</size>
             </plane>
           </geometry>
           <pose>0 0 0.0005 0 -0 0</pose>
@@ -741,7 +741,7 @@
           <pose>0 0 0.0005 0 -0 0</pose>
           <geometry>
             <box>
-              <size>1.40411 0.05 0.001</size>
+              <size>1.40411 0.30 0.001</size>
             </box>
           </geometry>
           <material>
@@ -1684,7 +1684,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_13'>
-          <pose>1.39403 2.06347 0 0 -0 1.5708</pose>
+          <pose>-5.39403 2.06347 0 0 -0 1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1714,7 +1714,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_6'>
-          <pose>-0.546734 3.60348 0 0 -0 1.5708</pose>
+          <pose>-5 -7 0 0 -0 1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1732,7 +1732,8 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_9'>
-          <pose>1.28707 4.20035 0 0 -0 0</pose>
+          <!-- x : -11.518672 - -4.018672, y : -7.006230 - -3.58658-->
+          <pose>-6.5 -4.506230 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1742,13 +1743,13 @@
         <pose>4.00109 3.7121 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='Line_11'>
-          <pose>0.03723 1.28759 0 0 0 -1.5708</pose>
+          <pose>-2.03723 -8.28759 0 0 0 -1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Line_13'>
-          <pose>0.51723 2.99009 0 0 -0 0.782787</pose>
+          <pose>-1.91723 -6.39009 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -1897,28 +1898,14 @@
         </link>
     </state>
     <actor name="actor1">
-      <pose>0 -4 1.04 0 0 3.14</pose>
+      <!-- <pose>0 0 1.04 0 0 3.14</pose> <!-- 똑바로 --> -->
+      <pose>1.5 0 1.04 0 0 3.14</pose>
       <link name="belt">
         <pose>0 0 0 0 0 0</pose>
-        <visual name='Line_11_Visual'>
-          <pose>0 0 1 0 0 0</pose>
-          <geometry>
-            <box>
-              <size>0.01 0.01 1.</size>
-            </box>
-          </geometry>
-          <material>
-            <script>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-              <name>Gazebo/Blue</name>
-            </script>
-          </material>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
         <sensor type="camera" name="belt_camera">
-          <pose>0 0 1 -1.57 -1.57 0</pose>
+          <!-- <pose>1 0 1 -1.57 -1.57 0</pose> -->
+          <!-- - 높이 앞뒤 roll pitch yaw-->
+          <pose>0 -0.10 0.30 0 -1.21 -1.57</pose>
           <camera>
               <horizontal_fov>1.085595</horizontal_fov>
               <image>
@@ -1946,6 +1933,21 @@
             <distortionT2>0.0</distortionT2>
           </plugin>
         </sensor>
+        <visual name="camera_visual">
+          <pose>0 -0.10 0.30 0 0.36 -1.57</pose> <!-- -1.21 + 1.57 -->
+          <geometry>
+            <cylinder>
+              <radius>0.05</radius>
+              <length>0.2</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.1 0.1 0.1 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+        </visual>
       </link>
       <skin>
         <filename>moonwalk.dae</filename>

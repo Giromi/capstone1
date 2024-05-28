@@ -15,6 +15,7 @@
   <node pkg="actor_line_follower" name="line_follower" type="follower.py" cwd="node" output="screen"></node>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="world_name" value="$(find actor_line_follower)/config/worlds/one_line.world"/> -->
     <arg name="world_name" value="$(find actor_line_follower)/config/worlds/world.world"/>
     <!-- world_name is wrt GAZEBO_RESOURCE_PATH environment variable -->
     <arg name="paused" value="false"/>
