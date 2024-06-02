@@ -1,0 +1,11 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/pal-robotics/ddynamic_reconfigure
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "kinetic-devel"]
+	remote = origin
+	merge = refs/heads/kinetic-devel
