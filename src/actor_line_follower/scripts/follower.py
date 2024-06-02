@@ -62,7 +62,7 @@ class Follower:
         # direction = self.detector.get_direction(message=msg, line_color='yellow', tol=15)
         # self.motion_planner.move(direction)
 
-        direction, error = self.detector.get_direction_with_pid(message=msg, line_color='yellow', tol=0)
+        direction, error = self.detector.get_direction_with_pid(message=msg, line_color=['green', 'yellow'], tol=0)
         control_input = self.controller.PID_control(error)
         # control_input = self.controller.P_control(error)
         self.motion_planner.move_control(direction, control_input)
