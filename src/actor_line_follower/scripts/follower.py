@@ -20,6 +20,7 @@ SIM_RATE = 30
 # maze = [[1, 0, 1, 0]]
 # simulation maze manual 
 # real input left right
+direction = ['left', 'right', 'go', 'left']
 
 class Follower:
     def __init__(self):
