@@ -74,7 +74,10 @@ class Follower:
 
         self.publisher.publish(error)
     def D435_callback(self, msg):
-        print(msg)
+        print(msg.bounding_boxes)
+        if len(msg.bounding_boxes):
+            print(msg.bounding_boxes[0].xmin,msg.bounding_boxes[0].xmax)
+            print(640/2, (msg.bounding_boxes[0].xmin + msg.bounding_boxes[0].xmax)/2)
 
 
     def toggle_robot(self):
