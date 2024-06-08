@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<launch>
+  <node pkg="actor_line_follower" name="line_follower" type="follower.py" cwd="node" output="screen"></node>
+  <!---->
+  <!-- <node pkg="rqt_image_view" type="rqt_image_view" name="rqt_image_view" args="/"/> -->
+
+</launch>

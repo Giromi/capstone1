@@ -14,6 +14,7 @@
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>nav_msgs</depend>
+  <build_depend>detection_msgs</build_depend>
   <build_depend>opencv-python</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>numpy</build_depend>
@@ -22,10 +23,13 @@
   <build_export_depend>cv_bridge</build_export_depend>
   <build_export_depend>numpy</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>detection_msgs</build_export_depend>
   <exec_depend>opencv-python</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>numpy</exec_depend>
   <exec_depend>rospy</exec_depend>
+  <exec_depend>detection_msgs</exec_depend>
+
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>

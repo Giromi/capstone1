@@ -6,10 +6,9 @@ import rospy
 from sensor_msgs.msg import Image
 from std_msgs.msg import Float32
 import matplotlib.pyplot as plt
-from detection_msgs.msg import BoundingBox, BoundingBoxes
 
 # Module imports
-from planner import MotionPlanner
+from RjjR[k[ import MotionPlanner
 from detector import LineDetector
 from controller import Controller
 # import getch
@@ -20,10 +19,6 @@ SIM_RATE = 30
 NAVI = ['R', 'L', 'L', 'R', 'L', 'R', 'G', 'R'] 
 NAVI = ['R', 'L', 'L', 'R', 'L', 'L', 'R']
 NAVI = ['R', 'L', 'L', 'R', 'R', 'R', 'L', 'R']
-
-CAMERA_WIDTH = 680
-CAMERA_HEIGHT = 480
-
 
 class Follower:
     def __init__(self):
@@ -41,9 +36,7 @@ class Follower:
 
         rospy.init_node('line_follower')
         self.rate = rospy.Rate(SIM_RATE) #30hz
-        # self.subscriber = rospy.Subscriber('camera/image', Image, self.camera_callback)
-
-        self.yolo_subscriber = rospy.Subscriber('/yolov5/detections', BoundingBoxes, self.D435_callback)
+        self.subscriber = rospy.Subscriber('camera/image', Image, self.camera_callback)
         self.publisher = rospy.Publisher('error', Float32, queue_size=10)
 
         self.is_running = False
@@ -73,9 +66,6 @@ class Follower:
         self.motion_planner.move_control(rotate_flag, control_input)
 
         self.publisher.publish(error)
-    def D435_callback(self, msg):
-        print(msg)
-
 
     def toggle_robot(self):
         while True:

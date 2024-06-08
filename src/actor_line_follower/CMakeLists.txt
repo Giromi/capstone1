@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   sensor_msgs
   message_generation
+  detection_msgs
 )
 
 find_package(gazebo REQUIRED)
@@ -31,6 +32,7 @@ catkin_package(
     gazebo_plugins
     geometry_msgs
     nav_msgs
+
 )
 
 
