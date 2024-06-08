@@ -35,13 +35,14 @@ class Follower:
         # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.1, T=SIM_RATE)
         # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.00000001, T=SIM_RATE)
 
-        self.controller = Controller(Kp=0.03, Ki=0.00002, Kd=0.1, T=SIM_RATE)
+        # self.controller = Controller(Kp=0.03, Ki=0.00002, Kd=0.1, T=SIM_RATE)
+        self.controller = Controller(Kp=0.03, Ki=0, Kd=0.1, T=SIM_RATE)
 
         rospy.init_node('line_follower')
         self.rate = rospy.Rate(self.sim_rate) #30hz
-        self.subscriber = rospy.Subscriber('camera/image', Image, self.camera_callback)
+        # self.subscriber = rospy.Subscriber('camera/image', Image, self.camera_callback)
 
-        # self.yolo_subscriber = rospy.Subscriber('/yolov5/detections', BoundingBoxes, self.D435_callback)
+        self.yolo_subscriber = rospy.Subscriber('/yolov5/detections', BoundingBoxes, self.D435_callback)
         self.publisher = rospy.Publisher('error', Float32, queue_size=10)
 
         self.is_running = False
@@ -143,10 +144,12 @@ class Follower:
         #     print(320, (msg.bounding_boxes[0].xmin + msg.bounding_boxes[0].xmax)/2)
 
         error_stop, error_go, stop_heigth = self.find_bounding_box_stop_go(msg.bounding_boxes)
-        rotate_direction, error = self.examine_path(error_stop, error_go, stop_heigth)
-        control_input = self.controller.PID_control(error)
-        self.motion_planner.move_control(rotate_direction, control_input)
-        self.publisher.publish(error)
+        self.examine_path(error_stop, error_go, stop_heigth)
+        control_input = self.controller.PID_control(self.error)
+        # control_input = self.controller.P_control(error)
+        self.motion_planner.move_control(self.rotate_sign, control_input)
+
+        self.publisher.publish(self.error)
 
 
     def find_bounding_box_stop_go(self, bounding_boxes):
@@ -155,10 +158,10 @@ class Follower:
         stop_heigth = None
         for box in bounding_boxes:
             cur = (box.xmin + box.xmax) / 2
-            if box.Class == 'stop':
+            if error_stop == None and box.Class == 'stop':
                 error_stop = self.ref - cur
                 stop_heigth = box.ymax - box.ymin
-            elif box.Class == 'straight':
+            elif error_go == None and box.Class == 'straight':
                 error_go = self.ref - cur
 
             if error_stop and error_go:
@@ -180,11 +183,11 @@ class Follower:
 # NAVI = ['R', 'L', 'L', 'R', 'L', 'L', 'R']
 # NAVI = []
 if __name__ == '__main__':
-    NAVI = 'RLLRRRLR' # 아래 경로
+    # NAVI = 'RLLRRRLR' # 아래 경로
     SIM_RATE = 30
     CAMERA_WIDTH = 680
     CAMERA_HEIGHT = 480
-    follower = Follower(navi=NAVI, 
+    follower = Follower(navi='', 
                         sim_rate=SIM_RATE, 
                         camera_width=CAMERA_WIDTH,
                         camera_height=CAMERA_HEIGHT
