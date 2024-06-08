@@ -24,13 +24,6 @@ class LineDetector:
 
         self.detection = Image()
         self.publisher = rospy.Publisher('line_follower', Image, queue_size=1)
-        self.rotate_direction = None
-        self.error_stop_old = None
-        self.error_go_old = None
-        self.navi = navi
-        self.rotate_direction_old = None
-        self.check_front = False
-        self.stop_height_old = None
 
     def read_image(self, message: Image):
         '''
@@ -112,7 +105,7 @@ class LineDetector:
             error_stop = self.width/2 - cx_stop
 
         except ZeroDivisionError:
-            cv2.putText(self.image, '[WARNING] No stop found', (int(self.width / 5), 20), cv2.FONT_HERSHEY_DUPLEX, .5, (0, 0, 255))
+            cv2.putText(self.image, 'No stop found', (int(self.width / 3), 20), cv2.FONT_HERSHEY_DUPLEX, .5, (0, 165, 255))
 
             self.detection = self.bridge.cv2_to_imgmsg(self.image, encoding='bgr8')
             self.publisher.publish(self.detection)
@@ -140,7 +133,7 @@ class LineDetector:
         
         
         except ZeroDivisionError:
-            cv2.putText(self.image, '[WARNING] No go found', (int(self.width / 5), 20), cv2.FONT_HERSHEY_DUPLEX, .5, (0, 0, 255))
+            cv2.putText(self.image, 'No go found', (int(self.width / 5), 20), cv2.FONT_HERSHEY_DUPLEX, .5, (0, 0, 255))
 
             self.detection = self.bridge.cv2_to_imgmsg(self.image, encoding='bgr8')
             self.publisher.publish(self.detection)
@@ -149,59 +142,10 @@ class LineDetector:
 
             rospy.logwarn('No go found')
         
-
-
-        error = error_go if error_stop == None else error_stop
-        if error == None :
-            error = 0
-
-        navi_size = len(self.navi)
-
-        if self.rotate_direction == None and error_stop != None:
-            self.rotate_direction = 0
-
-        if error_stop == None and self.error_stop_old != None \
-            and navi_size:
-            rospy.logwarn('rotate flag')
-            if self.navi[0] == 'L':
-                self.rotate_direction = 1
-            elif self.navi[0] == 'R':
-                self.rotate_direction = -1
-
-        if not self.check_front and error_go and self.error_go_old and abs(error_go) <= 100:
-            if abs(error_go) > abs(self.error_go_old):
-                self.check_front = False
-            elif self.rotate_direction == 1 or self.rotate_direction == -1:
-                rospy.logwarn('stop rotate')
-                self.check_front = True
-                error = 0
-        elif self.check_front and self.rotate_direction and error_go and self.error_go_old: 
-            if abs(error_go) <= abs(self.error_go_old) and 80 <= abs(error_go) <= 100:
-                self.rotate_direction = None
-                self.check_front = False
-
-
-        # elif self.rotate_direction == -1 and error_go != None and  error_go >= 100:
-        #     self.rotate_direction = None
-        
-
-        if not self.rotate_direction and self.rotate_direction_old:
-            if not self.check_front and navi_size:
-               self.navi.pop(0)
-        elif rect_stop and self.stop_height_old and rect_stop[3] > self.stop_height_old:
-            if navi_size and self.navi[0] == 'G' :
-               self.navi.pop(0)
-
-        rospy.loginfo(f'error_stop = {error_stop}, error_go = {error_go}')
-        rospy.loginfo(f'flag = {self.rotate_direction} / check_front = {self.check_front}')
-        rospy.loginfo(f'navi = {self.navi}')
-        if rect_stop != None:
-            self.stop_height_old = rect_stop[3]
-            rospy.loginfo(f'{rect_stop[0]}, {rect_stop[1]}, {rect_stop[2]}, {rect_stop[3]}')
-        self.error_stop_old = error_stop
-        self.error_go_old = error_go
-        self.rotate_direction_old = self.rotate_direction
-        return self.rotate_direction, error
+        if rect_stop == None:
+            return error_stop, error_go, None
+        rospy.loginfo(f'{self.height}, {self.width}')
+        return error_stop, error_go, rect_stop[3]
 
         # 로봇을 제어하기 위한 방향 계산
         # if abs(error) <= tol:  # 직진
