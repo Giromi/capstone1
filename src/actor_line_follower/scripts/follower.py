@@ -15,16 +15,21 @@ from controller import Controller
 # import threading
 
 SIM_RATE = 30
-
-
-# maze = [[1, 0, 1, 0]]
-# simulation maze manual 
-# real input left right
-direction = ['left', 'right', 'go', 'left']
+# 'L' : Left / 'R' : Right / 'G' : Go
+NAVI = ['R', 'L', 'L', 'R', 'L', 'R', 'G', 'R'] 
+NAVI = ['R', 'L', 'L', 'R', 'L', 'L', 'R']
+NAVI = ['R', 'L', 'L', 'R', 'R', 'R', 'L', 'R']
 
 class Follower:
     def __init__(self):
-        self.detector = LineDetector()
+        self.detector = LineDetector(navi=NAVI)
+        self.motion_planner = MotionPlanner(linear_speed=0.8)
+        # self.controller = Controller(Kp=0.0001, Ki=0.00000, Kd=0.000, T=SIM_RATE)
+        # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.000, T=SIM_RATE)
+
+class Follower:
+    def __init__(self):
+        self.detector = LineDetector(navi=NAVI)
         self.motion_planner = MotionPlanner(linear_speed=0.8)
         # self.controller = Controller(Kp=0.0001, Ki=0.00000, Kd=0.000, T=SIM_RATE)
         # self.controller = Controller(Kp=0.01, Ki=0.00000, Kd=0.000, T=SIM_RATE)
@@ -62,10 +67,10 @@ class Follower:
         # direction = self.detector.get_direction(message=msg, line_color='yellow', tol=15)
         # self.motion_planner.move(direction)
 
-        direction, error = self.detector.get_direction_with_pid(message=msg, line_color=['green', 'yellow'], tol=0)
+        rotate_flag, error = self.detector.get_direction_with_pid(message=msg, line_color=['green', 'yellow'], tol=50)
         control_input = self.controller.PID_control(error)
         # control_input = self.controller.P_control(error)
-        self.motion_planner.move_control(direction, control_input)
+        self.motion_planner.move_control(rotate_flag, control_input)
 
         self.publisher.publish(error)
 

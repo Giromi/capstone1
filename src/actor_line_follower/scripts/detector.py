@@ -11,14 +11,26 @@ from cv_bridge import CvBridge
 # Messages
 from sensor_msgs.msg import Image
 
+NOT_FOUND = 0
+STRAIGHT = 1
+LEFT = 2
+RIGHT = 3
+
 class LineDetector:
-    def __init__(self):
+    def __init__(self, navi=[]):
         self.video_data = []
         self.video_writer = cv2.VideoWriter('../recordings/detection.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, (320, 240))
         self.bridge = CvBridge()
 
         self.detection = Image()
         self.publisher = rospy.Publisher('line_follower', Image, queue_size=1)
+        self.rotate_direction = None
+        self.error_stop_old = None
+        self.error_go_old = None
+        self.navi = navi
+        self.rotate_direction_old = None
+        self.check_front = False
+        self.stop_height_old = None
 
     def read_image(self, message: Image):
         '''
@@ -78,6 +90,7 @@ class LineDetector:
         moments_go = cv2.moments(mask_go)
 
         error_stop = None
+        rect_stop = None
         try:
             cx_stop = int(moments_stop['m10'] / moments_stop['m00'])
             
@@ -105,8 +118,8 @@ class LineDetector:
             self.publisher.publish(self.detection)
 
             self.video_data.append(self.image)
-
-            rospy.logwarn('No line found')
+            #
+            # rospy.logwarn('No stop found')
         error_go = None
         try :
             cx_go = int(moments_go['m10'] / moments_go['m00'])
@@ -134,21 +147,64 @@ class LineDetector:
 
             self.video_data.append(self.image)
 
-            rospy.logwarn('No line found')
+            rospy.logwarn('No go found')
         
-        error = error_stop
+
+
+        error = error_go if error_stop == None else error_stop
         if error == None :
-            error = error_go
-        if error == None :
-            return 0,0    
+            error = 0
+
+        navi_size = len(self.navi)
+
+        if self.rotate_direction == None and error_stop != None:
+            self.rotate_direction = 0
+
+        if error_stop == None and self.error_stop_old != None \
+            and navi_size:
+            rospy.logwarn('rotate flag')
+            if self.navi[0] == 'L':
+                self.rotate_direction = 1
+            elif self.navi[0] == 'R':
+                self.rotate_direction = -1
+
+        if not self.check_front and error_go and self.error_go_old and abs(error_go) <= 100:
+            if abs(error_go) > abs(self.error_go_old):
+                self.check_front = False
+            elif self.rotate_direction == 1 or self.rotate_direction == -1:
+                rospy.logwarn('stop rotate')
+                self.check_front = True
+                error = 0
+        elif self.check_front and self.rotate_direction and error_go and self.error_go_old: 
+            if abs(error_go) <= abs(self.error_go_old) and 80 <= abs(error_go) <= 100:
+                self.rotate_direction = None
+                self.check_front = False
+
+
+        # elif self.rotate_direction == -1 and error_go != None and  error_go >= 100:
+        #     self.rotate_direction = None
+        
+
+        if not self.rotate_direction and self.rotate_direction_old:
+            if not self.check_front and navi_size:
+               self.navi.pop(0)
+        elif rect_stop and self.stop_height_old and rect_stop[3] > self.stop_height_old:
+            if navi_size and self.navi[0] == 'G' :
+               self.navi.pop(0)
+
+        rospy.loginfo(f'error_stop = {error_stop}, error_go = {error_go}')
+        rospy.loginfo(f'flag = {self.rotate_direction} / check_front = {self.check_front}')
+        rospy.loginfo(f'navi = {self.navi}')
+        if rect_stop != None:
+            self.stop_height_old = rect_stop[3]
+            rospy.loginfo(f'{rect_stop[0]}, {rect_stop[1]}, {rect_stop[2]}, {rect_stop[3]}')
+        self.error_stop_old = error_stop
+        self.error_go_old = error_go
+        self.rotate_direction_old = self.rotate_direction
+        return self.rotate_direction, error
 
         # 로봇을 제어하기 위한 방향 계산
-        if abs(error) <= tol:  # 직진
-            direction = 1
-            error = 0
-        elif error < 0:  # 왼쪽
-            direction = 2
-        else:  # 오른쪽
-            direction = 3
-
-        return direction, error
+        # if abs(error) <= tol:  # 직진
+        #     error = 0
+        # elif error < 0:  # 왼쪽
+        # else:  # 오른쪽

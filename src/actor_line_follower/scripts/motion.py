@@ -6,6 +6,12 @@ import rospy
 from geometry_msgs.msg import Twist
 import numpy as np
 
+# DIRECTION_DICT = {
+#     'L': np.pi,
+#     'R': -np.pi,
+# }
+ANG_VEL = 0.5 #np.pi
+
 class MotionPlanner:
     def __init__(self, linear_speed=0.2, angular_speed=0.15):
         self.velocity = Twist()
@@ -13,13 +19,16 @@ class MotionPlanner:
         self.linear_speed = linear_speed
         self.angular_speed = angular_speed
 
-    def move_control(self, direction, control_input):
-        self.velocity.linear.x = self.linear_speed
-        # self.velocity.angular.z = control_input 
-        self.velocity.angular.z = np.clip(control_input, -np.pi, np.pi)
+    def move_control(self, rotate_direction, control_input):
+        if rotate_direction:
+            self.velocity.linear.x = 0
+            self.velocity.angular.z = rotate_direction * ANG_VEL
+        else:
+            self.velocity.linear.x = self.linear_speed
+            self.velocity.angular.z = np.clip(control_input, -np.pi, np.pi)
         self.publisher.publish(self.velocity)
         # rospy.loginfo(f'Lin. vel. = {self.velocity.linear.x} - Ang. vel. = {self.velocity.angular.z}')
-        rospy.loginfo(f'dir = {direction} - Ang. vel. = {self.velocity.angular.z}\n')
+        rospy.loginfo(f'Lin. vel. = {self.velocity.linear.x} | Ang. vel. = {self.velocity.angular.z}\n')
 
 
     def move(self, dir):
